@@ -164,7 +164,7 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
         Log.d("TEST", "click listener:" + channels.get(1).name);
 
-        Channel channel = channels.get(position);
+        final Channel channel = channels.get(position);
 
         StalkerClient sc = APILoader.getStalkerClient();
 
@@ -184,6 +184,8 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
                         player.setAction(Intent.ACTION_VIEW);
 
                         player.setDataAndType(Uri.parse(channelLink), "video/*");
+                        player.putExtra("title", channel.name);
+                        player.putExtra("secure_uri", true);
                         startActivity(player);
                     }
 
