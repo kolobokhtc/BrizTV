@@ -12,7 +12,7 @@
     <string name="form_password_hint">Введите пароль</string>
 
     <string name="button_form_login">Войти</string>
-    <string name="button_form_register">Зарегестрироваться</string>
+    <string name="button_form_register">Зарегистрироваться</string>
 
     <string name="progress_wait">Загрузка...</string>
 </resources>
