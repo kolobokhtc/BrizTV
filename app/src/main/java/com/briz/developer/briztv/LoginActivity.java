@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.loopj.android.http.RequestParams;
 
@@ -27,6 +29,14 @@ public class LoginActivity extends Activity{
     TextView tvErrorMessage;
     EditText etUsername;
     EditText etPassword;
+    ProgressBar eLoginPb;
+    Button eLoginBtn;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.loginPbViewLogic(false);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +48,19 @@ public class LoginActivity extends Activity{
         tvErrorMessage = (TextView) findViewById(R.id.login_error);
         etUsername = (EditText) findViewById(R.id.login_email);
         etPassword = (EditText) findViewById(R.id.login_password);
+        eLoginPb = (ProgressBar) findViewById(R.id.loginProgress);
+        eLoginBtn = (Button) findViewById(R.id.btnLogin);
+
+        this.loginPbViewLogic(false);
+
+
+    }
+
+
+    protected void loginPbViewLogic(boolean shPb) {
+
+        eLoginPb.setVisibility((shPb) ? View.VISIBLE : View.INVISIBLE);
+        eLoginBtn.setVisibility((shPb) ? View.INVISIBLE : View.VISIBLE);
 
     }
 
@@ -45,6 +68,10 @@ public class LoginActivity extends Activity{
 
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
+
+
+        this.loginPbViewLogic(true);
+
 
         RequestParams params = new RequestParams();
 
@@ -60,7 +87,10 @@ public class LoginActivity extends Activity{
 
                     Log.d(TAG, "LOGIN RESULT: " + success + " | RESPONSE: " + response.toString());
 
+                    //that.loginPbViewLogic(false);
+
                     if (success == true){
+
                         stalkerClient = APILoader.getStalkerClient();
 
                         Log.d(TAG, "CLIENT ID: " + stalkerClient.getUserId());
@@ -68,11 +98,16 @@ public class LoginActivity extends Activity{
                         startHomeActivity();
 
                     } else {
+
                         try{
+
                             tvErrorMessage.setText(response.getString("error_description"));
                             Toast.makeText(getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
+
                         } catch (JSONException e){
+
                             Log.d(TAG, "LOGIN PARSE ERROR: " + e.toString());
+
                         }
 
                     }
