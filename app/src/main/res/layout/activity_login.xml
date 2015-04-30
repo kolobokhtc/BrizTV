@@ -72,6 +72,17 @@
             android:onClick="loginUser"
             android:text="@string/button_form_login"
             android:textColor="#fff" />
+
+        <ProgressBar
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/loginProgress"
+            android:visibility="invisible"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:indeterminateOnly="true"
+            android:indeterminate="true"
+            android:progressTint="@color/blue"
+            android:textAlignment="center" />
     </LinearLayout>
 
 </ScrollView>
