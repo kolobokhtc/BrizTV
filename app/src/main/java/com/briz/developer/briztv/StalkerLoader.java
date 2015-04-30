@@ -1,11 +1,6 @@
 package com.briz.developer.briztv;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.nfc.Tag;
-import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,7 +9,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,18 +23,12 @@ public class StalkerLoader{
     private StalkerClient stalkerClient;
     private Context context;
 
-    ProgressDialog progressDialog;
 
     public StalkerLoader(Context context, StalkerClient stalkerClient){
 
         this.stalkerClient = stalkerClient;
         this.context = context;
 
-        this.progressDialog = new ProgressDialog(context.getApplicationContext());
-        this.progressDialog.setMessage(context.getString(R.string.progress_wait));
-        this.progressDialog.setCancelable(false);
-
-        /*TODO сделать отображение прогресса выполнения транзакиции*/
 
     }
 
