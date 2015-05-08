@@ -76,9 +76,9 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> {
         //holder.description.setText(channel.logo);
         String logoUrl;
         if (channel.logo.length() > 0) {
-            logoUrl = new String("http://ott.briz.ua" + channel.logo);
+            logoUrl = "http://ott.briz.ua" + channel.logo;
         } else {
-            logoUrl = new String("http://ott.briz.ua/stalker_portal/misc/logos/320/no-logo.jpg");
+            logoUrl = "http://ott.briz.ua/stalker_portal/misc/logos/320/no-logo.jpg";
         }
         Log.d(TAG, "convert view for: " + logoUrl);
         imageLoader.displayImage(logoUrl, holder.logo, imageOptions);

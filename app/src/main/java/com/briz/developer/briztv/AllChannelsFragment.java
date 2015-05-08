@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final String TAG = AllChannelsFragment.class.getSimpleName();
-    private static final String BASE_URL = new String("http://ott.briz.ua");
+    private static final String BASE_URL = "http://ott.briz.ua";
 
     static ArrayList<Channel> channels = new ArrayList<Channel>();
     static ArrayList<String> resultRow;
@@ -64,7 +64,7 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     }
 
     public void setAPILoader(StalkerLoader loader){
-        this.APILoader = loader;
+        APILoader = loader;
     }
 
     public StalkerLoader getAPILoader(){
@@ -101,11 +101,11 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
         //progressDialog.show();
 
-        StalkerClient sc = APILoader.getStalkerClient();
+        StalkerClient sc = getAPILoader().getStalkerClient();
 
-        String url = new String("http://v2.api.ott.briz.ua/stalker_portal/api/users/"+sc.getUserId()+"/tv-channels");
+        String url = "http://v2.api.ott.briz.ua/stalker_portal/api/users/"+sc.getUserId()+"/tv-channels";
         Log.d(TAG, "START CHANNELS REQUEST");
-        APILoader.loader(url, new StalkerLoader.OnJSONResponseCallback() {
+        getAPILoader().loader(url, new StalkerLoader.OnJSONResponseCallback() {
             @Override
             public void onJSONResponse(boolean success, JSONObject response) {
                 //progressDialog.hide();
@@ -133,14 +133,16 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     public static ArrayList<Channel> parseChannels(JSONArray data){
 
-        ArrayList<Channel> channelsFromAjaxData = new ArrayList<Channel>();
+        ArrayList<Channel> channelsFromAjaxData = new ArrayList<>();
 
         try{
 
             for(int j = 0; j<data.length();j++){
 
-                JSONObject json_data = data.getJSONObject(j);
-                Channel resultRow = new Channel();
+                JSONObject json_data;
+                json_data = data.getJSONObject(j);
+                Channel resultRow;
+                resultRow = new Channel();
 
                 resultRow.channel_id = json_data.getString("id");
                 resultRow.name = json_data.getString("name");
@@ -164,13 +166,14 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
         Log.d("TEST", "click listener:" + channels.get(1).name);
 
-        final Channel channel = channels.get(position);
+        final Channel channel;
+        channel = channels.get(position);
 
-        StalkerClient sc = APILoader.getStalkerClient();
+        StalkerClient sc = getAPILoader().getStalkerClient();
 
-        String url = new String("http://v2.api.ott.briz.ua/stalker_portal/api/users/"+sc.getUserId()+"/tv-channels/"+channel.channel_id+"/link");
+        String url = "http://v2.api.ott.briz.ua/stalker_portal/api/users/"+sc.getUserId()+"/tv-channels/"+channel.channel_id+"/link";
 
-        APILoader.loader(url, new StalkerLoader.OnJSONResponseCallback() {
+        getAPILoader().loader(url, new StalkerLoader.OnJSONResponseCallback() {
             @Override
             public void onJSONResponse(boolean success, JSONObject response) {
 

@@ -89,7 +89,7 @@ public class LoginActivity extends Activity{
 
                     //that.loginPbViewLogic(false);
 
-                    if (success == true){
+                    if (success){
 
                         stalkerClient = APILoader.getStalkerClient();
 

@@ -24,8 +24,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
     private CharSequence mTitle;
 
-    private StalkerClient stalkerClient;
-    private StalkerLoader APILoader;
+    //private StalkerClient stalkerClient;
+    StalkerLoader APILoader;
 
     private AllChannelsFragment allChannelsFragment;
 
@@ -39,7 +39,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        stalkerClient = (StalkerClient) getIntent().getParcelableExtra(StalkerClient.class.getCanonicalName());
+        StalkerClient stalkerClient;
+        stalkerClient = getIntent().getParcelableExtra(StalkerClient.class.getCanonicalName());
         Log.d(TAG, "stalkerClient imported: " + stalkerClient.getAccessToken());
 
         APILoader = new StalkerLoader(getApplicationContext(), stalkerClient);
@@ -70,7 +71,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     public void onSectionAttached(int number) {
-        Fragment fragment = null;
+        //Fragment fragment = null;
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -174,8 +175,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_home, container, false);
         }
 
         @Override

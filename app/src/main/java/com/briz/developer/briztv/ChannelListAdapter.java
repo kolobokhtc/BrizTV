@@ -92,7 +92,7 @@ public class ChannelListAdapter  extends ArrayAdapter<Channel>{
         if (channel.logo.length() > 0){
 
             Log.d(TAG, "convert view for: " + channel.logo);
-            String logoUrl = new String("http://ott.briz.ua" + channel.logo);
+            String logoUrl = "http://ott.briz.ua" + channel.logo;
             imageLoader.displayImage(logoUrl, holder.logo, imageOptions);
 
         }
