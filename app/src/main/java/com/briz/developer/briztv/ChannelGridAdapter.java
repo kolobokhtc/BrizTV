@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,21 +17,23 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by eng210 on 23.04.2015.
  */
-public class ChannelGridAdapter extends ArrayAdapter<Channel> {
+public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filterable{
 
     private static final String TAG = ChannelGridAdapter.class.getSimpleName();
 
-    private static Filter channelFilter;
+    private Filter channelFilter;
     private ArrayList<Channel> channelList;
     private ArrayList<Channel> channelListOriginal;
     private Context context;
 
     private ImageLoader imageLoader;
     private DisplayImageOptions imageOptions;
+    final ChannelGridAdapter that = this;
 
     public ChannelGridAdapter(Context context, ArrayList<Channel> channelList) {
         super(context, R.layout.channell_list_item, channelList);
@@ -46,13 +49,102 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> {
                 .showImageForEmptyUri(R.drawable.ic_drawer)
                 .showImageOnFail(R.drawable.ic_drawer)
                 .cacheInMemory(false)
-                .cacheOnDisk(false)
+                .cacheOnDisk(true)
                 .considerExifParams(true)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .displayer(new RoundedBitmapDisplayer(20)).build();
 
     }
 
+    public void setChannelList(ArrayList<Channel> channelList) {
+
+        this.channelList.clear();
+        this.channelList.addAll(channelList);
+        Log.d(TAG, "SetChList: " + this.channelList.toString() + " ValCount: " + this.channelList.size());
+
+    }
+
+    public ArrayList<Channel> getChannelList() {
+
+        return this.channelList;
+
+    }
+
+    public int GetChannelsCount() {
+
+        return  this.channelList.size();
+
+    }
+
+    public ArrayList<Channel> getOriginalChannelList() {
+
+        return this.channelListOriginal;
+
+    }
+
+
+    private class ChannelFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            FilterResults results = new FilterResults();
+
+            if (constraint == null || constraint.length() == 0) {
+                // Без фильтра возрвщвем все содержимое адаптера
+                results.values = getOriginalChannelList();
+                results.count = getOriginalChannelList().size();
+
+
+            }
+            else {
+                // Начинаем фильтрацию содержимого адаптера
+                List<Channel> nChannelList = new ArrayList<>();
+
+                for (Channel p : channelList) {
+                    if (p.name.toUpperCase().contains(constraint.toString().toUpperCase()))
+                        nChannelList.add(p);
+                }
+
+                results.values = nChannelList;
+                results.count = nChannelList.size();
+
+            }
+            //Log.d(TAG, "ResFilterCount: " + results.values.toString() + " ValCount: " + results.count);
+            return results;
+
+        }
+
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+
+            // Now we have to inform the adapter about the new list filtered
+            if (results.count == 0) {
+
+                notifyDataSetInvalidated();
+
+            } else {
+
+                setChannelList((ArrayList<Channel>) results.values) ;
+                Log.d(TAG, "ResFilterCount: " + getChannelList().toString() + " ValCount: " + results.count);
+                notifyDataSetChanged();
+            }
+
+
+        }
+    }
+
+    @Override
+    public Filter getFilter() {
+
+        if (this.channelFilter == null) {
+            this.channelFilter = new ChannelFilter();
+
+        }
+        return this.channelFilter;
+
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -82,6 +174,7 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> {
         }
         Log.d(TAG, "convert view for: " + logoUrl);
         imageLoader.displayImage(logoUrl, holder.logo, imageOptions);
+
         return view;
     }
 
@@ -90,4 +183,8 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> {
         TextView description;
         ImageView logo;
     }
+
+
+
+
 }
