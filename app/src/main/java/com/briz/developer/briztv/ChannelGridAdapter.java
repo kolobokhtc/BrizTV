@@ -36,7 +36,7 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
     final ChannelGridAdapter that = this;
 
     public ChannelGridAdapter(Context context, ArrayList<Channel> channelList) {
-        super(context, R.layout.channell_list_item, channelList);
+        super(context, R.layout.channell_grid_item, channelList);
 
         this.channelList = channelList;
         this.channelListOriginal = channelList;

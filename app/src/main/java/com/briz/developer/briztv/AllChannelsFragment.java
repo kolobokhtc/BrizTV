@@ -6,17 +6,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.AdapterView;
 
 import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -31,14 +29,13 @@ import java.util.ArrayList;
 
 
 /**
- * Created by eng210 on 21.04.2015.
+ * Класс фрагмента списка каналов (вид сеткой)
+ * @version 21.04.2015.
  */
-public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnLongClickListener {
+public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private static final String TAG = AllChannelsFragment.class.getSimpleName();
-    private static final String BASE_URL_V2 = "http://v2.api.ott.briz.ua";
-    private static final String BASE_URL = "http://ott.briz.ua";
-    private static final String RES_URL = BASE_URL_V2 + "/stalker_portal/api/users/";
+
 
     static ArrayList<Channel> channels = new ArrayList<Channel>();
     static ArrayList<String> resultRow;
@@ -133,23 +130,11 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
         //this.gv = (GridView) mView.findViewById(R.id.gv_channels_grid);
         Log.d(TAG, "SET ADAPTER: " + channels.size());
 
-        //gv.setAdapter(channelGridAdapter);
 
         initChannelsUI();
-        //this.getFilter().filter(chs);
 
-        //gv.setAdapter(channelGridAdapter);
-
-       // lv.setOnItemClickListener(this);
         gv.setOnItemClickListener(this);
-        gv.setOnLongClickListener(this);
 
-
-
-
-
-
-        //Log.d(TAG, "ADAPTER: " + channelGridAdapter.getChannelList().toString() + " Count: " + channelGridAdapter.getChannelList().size());
 
     }
 
@@ -160,37 +145,89 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     }
 
 
-    public void ApplyFilter() {
+    public void ApplyFilter(CharSequence chs) {
 
-        CharSequence chs = "Банк";
         CharSequence chsb = "";
-        this.channelGridAdapter.getFilter().filter(chsb.toString());//, this.onFilterCompleted());
-        this.channelGridAdapter.getFilter().filter(chs.toString());//, this.onFilterCompleted());
+        this.channelGridAdapter.getFilter().filter(chsb.toString());
+        this.channelGridAdapter.getFilter().filter(chs.toString());
 
     }
 
     public void getChannels(){
 
-        //progressDialog.show();
-
-
-        setupStalkerClient();
-
-        String url = RES_URL + this.user_id + "/tv-channels";
-
-        requestChannels(url, false);
+        this.getChannels(false);
 
     }
 
+    public void getChannels(boolean reFresh){
+
+        setupStalkerClient();
+
+        String url = UrlSettings.getResUrl() + this.user_id + "/tv-channels";
+
+        requestChannels(url, reFresh);
+
+    }
 
     public void getChannels(String genre_id) {
 
         this.setupStalkerClient();
 
-        String url = RES_URL + this.user_id + "/tv-genres/" + genre_id + "/tv-channels";
+        String url = UrlSettings.getResUrl() + this.user_id + "/tv-genres/" + genre_id + "/tv-channels";
 
         this.requestChannels(url, true);
 
+    }
+
+    public void startChooseGenres() {
+
+        Intent genresIntent = new Intent(getActivity().getBaseContext(), GenresActivity.class);
+        StalkerClient sc = APILoader.getStalkerClient();
+        genresIntent.putExtra("StalkerClient", sc);
+        startActivityForResult(genresIntent, 7);
+
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        String genreIDx = "all";
+
+        try {
+
+            super.onActivityResult(requestCode, resultCode, data);
+
+            genreIDx = data.getStringExtra("genre_id");
+
+        } catch (NullPointerException e) {
+
+            genreIDx = "all";
+
+        } finally {
+
+            Log.d("Genre", genreIDx + "  " + resultCode);
+
+            this.onGenreResult(genreIDx);
+
+        }
+
+
+    }
+
+    private void onGenreResult(String genreIDs) {
+
+        if (genreIDs.equals("all")) {
+
+            this.getChannels(true);
+
+        } else {
+
+            this.getChannels(genreIDs);
+
+        }
     }
 
     private void requestChannels(String url, boolean reFresh) {
@@ -207,17 +244,18 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
                     if (response.has("status")) {
 
                         JSONArray web_channels = response.getJSONArray("results");
+                        channels.clear();
 
                         channels = parseChannels(web_channels);
                         showChannels();
                     }
 
                     if (response.has("error")) {
-                        //Toast.makeText(getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity().getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
                     }
 
                 } catch (JSONException e) {
-                    //Toast.makeText(getApplicationContext(), "Error in code..((", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Error in code..((", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 Log.d(TAG, "GET CHANNELS REQUEST COMPLETE: " + response.toString());
@@ -263,13 +301,6 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-
-        this.ApplyFilter();
-
-        return true;
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -280,9 +311,8 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
         channel = channels.get(position);
 
         this.setupStalkerClient();
-        this.ApplyFilter();
 
-        String url = RES_URL + this.user_id + "/tv-channels/"+channel.channel_id + "/link";
+        String url = UrlSettings.getResUrl() + this.user_id + "/tv-channels/"+channel.channel_id + "/link";
 
         getAPILoader().loader(url, new StalkerLoader.OnJSONResponseCallback() {
             @Override
@@ -304,13 +334,17 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
                     }
 
                     if (response.has("error")) {
-                        //Toast.makeText(getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
+
+                        Toast.makeText(getActivity().getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
                     }
 
                 } catch (JSONException e) {
-                    //Toast.makeText(getApplicationContext(), "Error in code..((", Toast.LENGTH_LONG).show();
+
+                    Toast.makeText(getActivity().getApplicationContext(), "Error in code..((", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
+
                 }
+
                 Log.d(TAG, "GET CHANNELS REQUEST COMPLETE: " + response.toString());
             }
         });

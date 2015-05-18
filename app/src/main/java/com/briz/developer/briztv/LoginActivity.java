@@ -145,9 +145,8 @@ public class LoginActivity extends Activity{
             });
 
 
-            //invokeLogin(params);
 
-        } else{
+        } else {
 
             Toast.makeText(getApplicationContext(), "Пожалуйста введите корретный логин и пароль", Toast.LENGTH_LONG).show();
         }

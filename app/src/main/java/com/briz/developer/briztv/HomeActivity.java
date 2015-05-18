@@ -3,6 +3,8 @@ package com.briz.developer.briztv;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -112,6 +114,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
     }
 
+
+
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -149,21 +153,18 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         }
 
         if (item.getItemId() == R.id.action_example) {
-            Intent genresIntent = new Intent(getApplicationContext(), GenresActivity.class);
-            startActivityForResult(genresIntent, RESULT_OK);
+
+            allChannelsFragment.startChooseGenres();
+
             return true;
+
         }
 
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK && allChannelsFragment != null){
-            allChannelsFragment.getChannels(data.getStringExtra("genre_id"));
-        }
-    }
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -207,6 +208,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+
 
         allChannelsFragment.setAPILoader(APILoader);
     }

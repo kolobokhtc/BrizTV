@@ -10,6 +10,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_example">Жанры</string>
+    <string name="action_search">Поиск</string>
 
     <string name="action_settings">Настройки</string>
 
