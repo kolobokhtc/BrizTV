@@ -2,12 +2,15 @@ package com.briz.developer.briztv;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
@@ -27,31 +30,51 @@ public class LoginActivity extends Activity{
     private StalkerLoader APILoader;
 
     TextView tvErrorMessage;
-    EditText etUsername;
-    EditText etPassword;
+    String etUsername;
+    String etPassword;
     ProgressBar eLoginPb;
     Button eLoginBtn;
+    SharedPreferences sp;
+
 
     @Override
     protected void onResume() {
         super.onResume();
         this.loginPbViewLogic(false);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
+        setupPreferences();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+
 
         APILoader = new StalkerLoader(getApplicationContext(), new StalkerClient());
 
         tvErrorMessage = (TextView) findViewById(R.id.login_error);
-        etUsername = (EditText) findViewById(R.id.login_email);
-        etPassword = (EditText) findViewById(R.id.login_password);
+
         eLoginPb = (ProgressBar) findViewById(R.id.loginProgress);
         eLoginBtn = (Button) findViewById(R.id.btnLogin);
 
+
+
         this.loginPbViewLogic(false);
+
+
+    }
+
+
+
+    private void setupPreferences() {
+
+        etUsername = sp.getString("user_login", "test_acc");
+        etPassword= sp.getString("user_pwd", "guest");
 
 
     }
@@ -66,8 +89,8 @@ public class LoginActivity extends Activity{
 
     public void loginUser(View view){
 
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+
+        final LoginActivity that = this;
 
 
         this.loginPbViewLogic(true);
@@ -75,11 +98,11 @@ public class LoginActivity extends Activity{
 
         RequestParams params = new RequestParams();
 
-        if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)){
+        if (!TextUtils.isEmpty(etUsername) && !TextUtils.isEmpty(etPassword)){
 
             params.put("grant_type", "password");
-            params.put("username", username);
-            params.put("password", password);
+            params.put("username", etUsername);
+            params.put("password", etPassword);
 
             APILoader.login(params, new StalkerLoader.OnJSONResponseCallback() {
                 @Override
@@ -87,7 +110,7 @@ public class LoginActivity extends Activity{
 
                     Log.d(TAG, "LOGIN RESULT: " + success + " | RESPONSE: " + response.toString());
 
-                    //that.loginPbViewLogic(false);
+
 
                     if (success){
 
@@ -99,6 +122,7 @@ public class LoginActivity extends Activity{
 
                     } else {
 
+
                         try{
 
                             tvErrorMessage.setText(response.getString("error_description"));
@@ -108,18 +132,50 @@ public class LoginActivity extends Activity{
 
                             Log.d(TAG, "LOGIN PARSE ERROR: " + e.toString());
 
+                        } finally {
+
+                            that.loginPbViewLogic(false);
+
                         }
 
                     }
                 }
+
+
             });
+
 
             //invokeLogin(params);
 
         } else{
-            Toast.makeText(getApplicationContext(), "Please fill the form, don't leave any field blank", Toast.LENGTH_LONG).show();
+
+            Toast.makeText(getApplicationContext(), "Пожалуйста введите корретный логин и пароль", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.global, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+            startActivity(prefIntent);
+
+            return true;
+        }
+
+        return super.onMenuItemSelected(featureId, item);
     }
 
     private void startHomeActivity() {

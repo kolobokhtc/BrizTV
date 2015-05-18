@@ -37,7 +37,7 @@ public class StalkerLoader{
     }
 
     public interface OnJSONResponseCallback {
-        public void onJSONResponse(boolean success, JSONObject response);
+        void onJSONResponse(boolean success, JSONObject response);
     }
 
     /**
@@ -47,6 +47,8 @@ public class StalkerLoader{
     public void login(RequestParams params,final OnJSONResponseCallback callback){
 
         AsyncHttpClient client = new AsyncHttpClient();
+
+        final StalkerLoader that = this;
 
         client.post("http://ott.briz.ua/stalker_portal/auth/token.php", params, new AsyncHttpResponseHandler() {
 
@@ -80,13 +82,8 @@ public class StalkerLoader{
             @Override
             public void onFailure(int statusCode, Header[] headers,  byte[] response, Throwable throwable) {
 
-                if (statusCode == 404) {
-                    Toast.makeText(context, "Requested resource not found ", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(context, "Something went wrong..((", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(context, "Unexpected error..((", Toast.LENGTH_LONG).show();
-                }
+                that.failureToasts(statusCode);
+                callback.onJSONResponse(false, new JSONObject());
             }
 
         });
@@ -102,12 +99,14 @@ public class StalkerLoader{
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", stalkerClient.getRefreshToken());
 
+        final StalkerLoader that = this;
+
         AsyncHttpClient client = new AsyncHttpClient();
 
         client.post("http://ott.briz.ua/stalker_portal/auth/token.php", params, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(int i, Header[] headers,  byte[] bytes) {
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
                 try {
                     String response = new String(bytes);
 
@@ -134,15 +133,9 @@ public class StalkerLoader{
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers,  byte[] response, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, byte[] response, Throwable throwable) {
 
-                if (statusCode == 404) {
-                    Toast.makeText(context, "Requested resource not found ", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(context, "Something went wrong..((", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(context, "Unexpected error..((", Toast.LENGTH_LONG).show();
-                }
+                that.failureToasts(statusCode);
             }
 
         });
@@ -158,13 +151,15 @@ public class StalkerLoader{
 
         Log.d(TAG,"LOAD URL: " + url);
 
+        final StalkerLoader that = this;
+
         AsyncHttpClient client = new AsyncHttpClient();
 
         client.addHeader("Accept","application/json");
-        client.addHeader("Authorization","Bearer "+stalkerClient.getAccessToken());
-        client.addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36");
+        client.addHeader("Authorization", "Bearer " + stalkerClient.getAccessToken());
+        client.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36");
 
-        client.get( url , new AsyncHttpResponseHandler() {
+        client.get(url, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
@@ -172,12 +167,12 @@ public class StalkerLoader{
 
                     //Intent loginIntent = new Intent(context, LoginActivity.class);
                     //loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                   // loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    // loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     //context.startActivity(loginIntent);
 
                     String response = new String(bytes);
 
-                    Log.d(TAG,"REQUEST COMPLETE: " + response.toString());
+                    Log.d(TAG, "REQUEST COMPLETE: " + response.toString());
 
                     JSONObject obj = new JSONObject(response);
                     if (obj.has("status")) {
@@ -199,19 +194,8 @@ public class StalkerLoader{
             public void onFailure(int statusCode, Header[] headers, byte[] response, Throwable throwable) {
                 //progressDialog.hide();
                 Log.e(TAG, "-------request statusCode: " + statusCode);
-                if (statusCode == 404) {
-                    Toast.makeText(context, "Requested resource not found ", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(context, "Something went wrong..((", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 401){
-                    Toast.makeText(context, "No authorized request", Toast.LENGTH_LONG).show();
-                   // Intent loginIntent = new Intent(context, LoginActivity.class);
-                   // context.startActivity(loginIntent);
+                that.failureToasts(statusCode);
 
-                }
-                else {
-                    Toast.makeText(context, "Unexpected error..((", Toast.LENGTH_LONG).show();
-                }
             }
 
 
@@ -232,11 +216,11 @@ public class StalkerLoader{
                 @Override
                 public void onJSONResponse(boolean success, JSONObject response) {
                     if (success == true){
-                        Toast.makeText(context, "Token updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Токен обновлен", Toast.LENGTH_SHORT).show();
                         stalkerClient.setData(response);
                         invokeRequest(url, callback);
                     } else {
-                        Toast.makeText(context, "Token not updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Токен не обновлен", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -244,6 +228,40 @@ public class StalkerLoader{
             Log.i(TAG, "TOKEN CORRECT: ");
             invokeRequest(url, callback);
         }
+
+    }
+
+    private void failureToasts(int statusCode) {
+
+        switch (statusCode) {
+
+            case 401:
+                printToast("Ошибка авторизации ресурса.. ");
+                break;
+
+            case 404:
+                printToast("Запрашиваемый ресурс не найден ");
+                break;
+
+            case 500:
+                printToast("Ошибка параметров запроса к серверу.. ");
+                break;
+
+            case 0:
+                printToast("Отсутствует соединение с Интернет ");
+                break;
+
+            default:
+                printToast("Произошла неизвестная ошибка.. ");
+                break;
+
+        }
+
+    }
+
+    private void printToast(String msg) {
+
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
 
     }
 

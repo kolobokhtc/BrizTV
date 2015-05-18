@@ -2,6 +2,7 @@ package com.briz.developer.briztv;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -141,10 +142,27 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+            startActivity(prefIntent);
+
             return true;
         }
 
+        if (item.getItemId() == R.id.action_example) {
+            Intent genresIntent = new Intent(getApplicationContext(), GenresActivity.class);
+            startActivityForResult(genresIntent, RESULT_OK);
+            return true;
+        }
+
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK && allChannelsFragment != null){
+            allChannelsFragment.getChannels(data.getStringExtra("genre_id"));
+        }
     }
 
     /**

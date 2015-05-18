@@ -6,11 +6,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.AdapterView;
 
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -29,13 +33,16 @@ import java.util.ArrayList;
 /**
  * Created by eng210 on 21.04.2015.
  */
-public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnLongClickListener {
 
     private static final String TAG = AllChannelsFragment.class.getSimpleName();
+    private static final String BASE_URL_V2 = "http://v2.api.ott.briz.ua";
     private static final String BASE_URL = "http://ott.briz.ua";
+    private static final String RES_URL = BASE_URL_V2 + "/stalker_portal/api/users/";
 
     static ArrayList<Channel> channels = new ArrayList<Channel>();
     static ArrayList<String> resultRow;
+    final AllChannelsFragment that = this;
 
     private boolean list_visibile = false;
     private ListView lv;
@@ -43,7 +50,10 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     private ChannelListAdapter channelListAdapter;
     private ChannelGridAdapter channelGridAdapter;
+    private StalkerClient sc;
     private View mView;
+
+    private Integer user_id;
 
     private static StalkerLoader APILoader;
 
@@ -63,6 +73,8 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+
+
     public void setAPILoader(StalkerLoader loader){
         APILoader = loader;
     }
@@ -80,31 +92,113 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
         return rootView;
     }
 
+
+    public Filter.FilterListener onFilterCompleted() {
+
+        return new Filter.FilterListener() {
+
+            @Override
+            public void onFilterComplete(int count) {
+
+                initChannelsUI();
+
+
+                Log.d(TAG, "ADAPTER: " + that.channelGridAdapter.getChannelList().toString() + " Count: " + count);
+
+            }
+        };
+
+    }
+
+    private void initChannelsUI() {
+
+        this.gv = (GridView) mView.findViewById(R.id.gv_channels_grid);
+        this.gv.refreshDrawableState();
+        this.gv.setAdapter(channelGridAdapter);
+        this.gv.refreshDrawableState();
+
+    }
+
+
+
+
     public void showChannels(){
 
         Log.d(TAG, "CHANNELS ON CREATE VIEW COUNT: " + channels.size());
 
         //channelListAdapter = new ChannelListAdapter(getActivity(), channels);
-        channelGridAdapter = new ChannelGridAdapter(getActivity(), channels);
+        channelGridAdapter = (!hasChannels()) ? new ChannelGridAdapter(getActivity(), channels) : channelGridAdapter;
         Log.d(TAG, "INIT ADAPTER: " + channels.size());
         //lv = (ListView) mView.findViewById(R.id.lv_channels_list);
-        gv = (GridView) mView.findViewById(R.id.gv_channels_grid);
+        //this.gv = (GridView) mView.findViewById(R.id.gv_channels_grid);
         Log.d(TAG, "SET ADAPTER: " + channels.size());
-        gv.setAdapter(channelGridAdapter);
+
+        //gv.setAdapter(channelGridAdapter);
+
+        initChannelsUI();
+        //this.getFilter().filter(chs);
+
+        //gv.setAdapter(channelGridAdapter);
+
        // lv.setOnItemClickListener(this);
         gv.setOnItemClickListener(this);
+        gv.setOnLongClickListener(this);
+
+
+
+
+
+
+        //Log.d(TAG, "ADAPTER: " + channelGridAdapter.getChannelList().toString() + " Count: " + channelGridAdapter.getChannelList().size());
 
     }
 
+    public boolean hasChannels() {
+
+        return (channelGridAdapter != null && channelGridAdapter.GetChannelsCount() > 0);
+
+    }
+
+
+    public void ApplyFilter() {
+
+        CharSequence chs = "Банк";
+        CharSequence chsb = "";
+        this.channelGridAdapter.getFilter().filter(chsb.toString());//, this.onFilterCompleted());
+        this.channelGridAdapter.getFilter().filter(chs.toString());//, this.onFilterCompleted());
+
+    }
 
     public void getChannels(){
 
         //progressDialog.show();
 
-        StalkerClient sc = getAPILoader().getStalkerClient();
 
-        String url = "http://v2.api.ott.briz.ua/stalker_portal/api/users/"+sc.getUserId()+"/tv-channels";
+        setupStalkerClient();
+
+        String url = RES_URL + this.user_id + "/tv-channels";
+
+        requestChannels(url, false);
+
+    }
+
+
+    public void getChannels(String genre_id) {
+
+        this.setupStalkerClient();
+
+        String url = RES_URL + this.user_id + "/tv-genres/" + genre_id + "/tv-channels";
+
+        this.requestChannels(url, true);
+
+    }
+
+    private void requestChannels(String url, boolean reFresh) {
+
         Log.d(TAG, "START CHANNELS REQUEST");
+
+        if (hasChannels() && !reFresh) return;
+
         getAPILoader().loader(url, new StalkerLoader.OnJSONResponseCallback() {
             @Override
             public void onJSONResponse(boolean success, JSONObject response) {
@@ -129,6 +223,14 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
                 Log.d(TAG, "GET CHANNELS REQUEST COMPLETE: " + response.toString());
             }
         });
+
+    }
+
+    private void setupStalkerClient() {
+
+        this.sc = getAPILoader().getStalkerClient();
+        this.user_id = this.sc.getUserId();
+
     }
 
     public static ArrayList<Channel> parseChannels(JSONArray data){
@@ -162,16 +264,25 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     }
 
     @Override
+    public boolean onLongClick(View v) {
+
+        this.ApplyFilter();
+
+        return true;
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Log.d("TEST", "click listener:" + channels.get(1).name);
+        //Log.d("TEST", "click listener:" + channels.get(1).name);
 
         final Channel channel;
         channel = channels.get(position);
 
-        StalkerClient sc = getAPILoader().getStalkerClient();
+        this.setupStalkerClient();
+        this.ApplyFilter();
 
-        String url = "http://v2.api.ott.briz.ua/stalker_portal/api/users/"+sc.getUserId()+"/tv-channels/"+channel.channel_id+"/link";
+        String url = RES_URL + this.user_id + "/tv-channels/"+channel.channel_id + "/link";
 
         getAPILoader().loader(url, new StalkerLoader.OnJSONResponseCallback() {
             @Override
