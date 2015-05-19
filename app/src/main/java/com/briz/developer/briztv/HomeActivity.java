@@ -2,6 +2,9 @@ package com.briz.developer.briztv;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -24,8 +27,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
     private CharSequence mTitle;
 
-    private StalkerClient stalkerClient;
-    private StalkerLoader APILoader;
+    //private StalkerClient stalkerClient;
+    StalkerLoader APILoader;
 
     private AllChannelsFragment allChannelsFragment;
 
@@ -39,7 +42,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        stalkerClient = (StalkerClient) getIntent().getParcelableExtra(StalkerClient.class.getCanonicalName());
+        StalkerClient stalkerClient;
+        stalkerClient = getIntent().getParcelableExtra(StalkerClient.class.getCanonicalName());
         Log.d(TAG, "stalkerClient imported: " + stalkerClient.getAccessToken());
 
         APILoader = new StalkerLoader(getApplicationContext(), stalkerClient);
@@ -70,7 +74,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     public void onSectionAttached(int number) {
-        Fragment fragment = null;
+        //Fragment fragment = null;
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -110,9 +114,11 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
     }
 
+
+
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
@@ -140,11 +146,25 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+            startActivity(prefIntent);
+
             return true;
         }
 
+        if (item.getItemId() == R.id.action_example) {
+
+            allChannelsFragment.startChooseGenres();
+
+            return true;
+
+        }
+
+
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -174,8 +194,7 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_home, container, false);
         }
 
         @Override
@@ -189,6 +208,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+
 
         allChannelsFragment.setAPILoader(APILoader);
     }

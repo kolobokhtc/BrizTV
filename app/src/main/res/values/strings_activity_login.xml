@@ -6,13 +6,13 @@
 
     <string name="form_name_text">Имя</string>
     <string name="form_name_hint">Введите имя</string>
-    <string name="form_login_text">Email</string>
+    <string name="form_login_text">OTT IPTV ООО ТРК Бриз</string>
     <string name="form_login_hint">Введите Email</string>
     <string name="form_password_text">Пароль</string>
     <string name="form_password_hint">Введите пароль</string>
 
-    <string name="button_form_login">Войти</string>
-    <string name="button_form_register">Зарегестрироваться</string>
+    <string name="button_form_login">Список каналов</string>
+    <string name="button_form_register">Зарегистрироваться</string>
 
     <string name="progress_wait">Загрузка...</string>
 </resources>

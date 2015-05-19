@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Объект пользователя автризировавшегося на Stalker
+ * Объект пользователя авторизировавшегося на Stalker
  *
  * Created by Vladimir(kolobokhtc@gmail.com) on 21.04.2015.
  */
@@ -16,55 +16,55 @@ public class StalkerClient implements Parcelable{
 
     private static final String TAG = StalkerClient.class.getSimpleName();
 
-    public String access_token;
-    public String token_type;
-    public String refresh_token;
-    public Integer user_id;
-    public Long expires_in;
+    private String access_token;
+    private String token_type;
+    private String refresh_token;
+    private Integer user_id;
+    private Long expires_in;
 
     public StalkerClient(){
 
     }
 
     public String getAccessToken(){
-        return access_token;
+        return this.access_token;
     }
 
     public String getTokenType(){
-        return token_type;
+        return this.token_type;
     }
 
     public String getRefreshToken(){
-        return refresh_token;
+        return this.refresh_token;
     }
 
     public Integer getUserId(){
-        return user_id;
+        return this.user_id;
     }
 
     public Long getExpiresIn(){
-        return expires_in;
+        return this.expires_in;
     }
 
     public void setAccessToken(String value){
-        access_token = value;
+        this.access_token = value;
     }
 
     public void setTokenType(String value){
-        token_type = value;
+        this.token_type = value;
     }
 
     public void setRefreshToken(String value){
-        refresh_token = value;
+        this.refresh_token = value;
     }
 
     public void setUserId(Integer value){
-        user_id = value;
+        this.user_id = value;
     }
 
     public void setExpiresIn(Long value){
         long time = System.currentTimeMillis();
-        expires_in = time + (value*1000);
+        this.expires_in = time + (value*1000);
     }
 
     public void setData(JSONObject jsonObject){
@@ -101,7 +101,7 @@ public class StalkerClient implements Parcelable{
         }
 
 
-    };
+    }
 
     public boolean isLogin(){
 
@@ -114,35 +114,32 @@ public class StalkerClient implements Parcelable{
 
         return false;
 
-    };
+    }
 
     public boolean isExpireToken(){
 
         long time = System.currentTimeMillis();
         Log.e(TAG, "CURRENT TIME: " + time);
         Log.e(TAG, "EXPIRE TIME: " + getExpiresIn());
-        if ( time > getExpiresIn()){
-            return true;
-        }
 
-        return false;
+        return ( time > getExpiresIn());
 
-    };
+    }
 
     @Override
     public int describeContents() {
         return 0;
-    };
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         Log.e(TAG, "writeToParcel: ");
-        dest.writeString(access_token);
-        dest.writeString(refresh_token);
-        dest.writeString(token_type);
-        dest.writeInt(user_id);
-        dest.writeLong(expires_in);
-    };
+        dest.writeString(this.access_token);
+        dest.writeString(this.refresh_token);
+        dest.writeString(this.token_type);
+        dest.writeInt(this.user_id);
+        dest.writeLong(this.expires_in);
+    }
 
     public static final Creator<StalkerClient> CREATOR = new Creator<StalkerClient>(){
 
@@ -162,11 +159,11 @@ public class StalkerClient implements Parcelable{
 
         Log.e(TAG, "deserializing From Parcel: ");
 
-        access_token = parcel.readString();
-        refresh_token = parcel.readString();
-        token_type = parcel.readString();
-        user_id = parcel.readInt();
-        expires_in = parcel.readLong();
+        this.access_token = parcel.readString();
+        this.refresh_token = parcel.readString();
+        this.token_type = parcel.readString();
+        this.user_id = parcel.readInt();
+        this.expires_in = parcel.readLong();
 
-    };
+    }
 }
