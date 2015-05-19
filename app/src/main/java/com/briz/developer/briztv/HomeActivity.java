@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +28,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private CharSequence mTitle;
+
+    SearchView searchView;
 
     //private StalkerClient stalkerClient;
     StalkerLoader APILoader;
@@ -132,6 +136,27 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.home, menu);
             restoreActionBar();
+
+            MenuItem searchItem = menu.findItem(R.id.action_search);
+            searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    allChannelsFragment.ApplyFilter(s.toString());
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+
+                    allChannelsFragment.ApplyFilter(s.toString());
+                    return true;
+                }
+            });
+
+
+
             return true;
         }
         return super.onCreateOptionsMenu(menu);

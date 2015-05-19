@@ -39,7 +39,9 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
         super(context, R.layout.channell_grid_item, channelList);
 
         this.channelList = channelList;
-        this.channelListOriginal = channelList;
+
+        this.channelListOriginal  = channelList;
+
         this.context = context;
 
         this.imageLoader = ImageLoader.getInstance();
@@ -60,7 +62,10 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
 
         this.channelList.clear();
         this.channelList.addAll(channelList);
-        Log.d(TAG, "SetChList: " + this.channelList.toString() + " ValCount: " + this.channelList.size());
+        //this.channelList = new ArrayList<>();
+
+        //this.channelList = channelList;
+        Log.d(TAG, "SetChList: " + this.channelList.size());
 
     }
 
@@ -90,9 +95,12 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
 
             FilterResults results = new FilterResults();
 
+            List<Channel> eChannelList = new ArrayList<>();
+
             if (constraint == null || constraint.length() == 0) {
-                // Без фильтра возрвщвем все содержимое адаптера
-                results.values = getOriginalChannelList();
+                // Без фильтра возвращаем все содержимое адаптера
+                eChannelList.addAll(getOriginalChannelList());
+                results.values = eChannelList;
                 results.count = getOriginalChannelList().size();
 
 
@@ -101,7 +109,10 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
                 // Начинаем фильтрацию содержимого адаптера
                 List<Channel> nChannelList = new ArrayList<>();
 
-                for (Channel p : channelList) {
+                ArrayList <Channel> tchannelList = new ArrayList<>();
+                tchannelList.addAll(getOriginalChannelList());
+
+                for (Channel p : tchannelList) {
                     if (p.name.toUpperCase().contains(constraint.toString().toUpperCase()))
                         nChannelList.add(p);
                 }
@@ -127,7 +138,7 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
             } else {
 
                 setChannelList((ArrayList<Channel>) results.values) ;
-                Log.d(TAG, "ResFilterCount: " + getChannelList().toString() + " ValCount: " + results.count);
+                Log.d(TAG, "ResFilterCount: " +  getChannelList().size());
                 notifyDataSetChanged();
             }
 

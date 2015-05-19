@@ -49,6 +49,7 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     private ChannelGridAdapter channelGridAdapter;
     private StalkerClient sc;
     private View mView;
+    Genre genreFlag;
 
     private Integer user_id;
 
@@ -67,6 +68,9 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
                 .tasksProcessingOrder(QueueProcessingType.FIFO)
                 .build();
         ImageLoader.getInstance().init(config);
+
+        genreFlag = new Genre();
+        genreFlag.InitGenres();
 
     }
 
@@ -123,17 +127,16 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
         Log.d(TAG, "CHANNELS ON CREATE VIEW COUNT: " + channels.size());
 
-        //channelListAdapter = new ChannelListAdapter(getActivity(), channels);
         channelGridAdapter = (!hasChannels()) ? new ChannelGridAdapter(getActivity(), channels) : channelGridAdapter;
         Log.d(TAG, "INIT ADAPTER: " + channels.size());
-        //lv = (ListView) mView.findViewById(R.id.lv_channels_list);
-        //this.gv = (GridView) mView.findViewById(R.id.gv_channels_grid);
         Log.d(TAG, "SET ADAPTER: " + channels.size());
 
 
         initChannelsUI();
 
         gv.setOnItemClickListener(this);
+
+        this.showGenresInfo(genreFlag, channels.size());
 
 
     }
@@ -148,7 +151,7 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     public void ApplyFilter(CharSequence chs) {
 
         CharSequence chsb = "";
-        this.channelGridAdapter.getFilter().filter(chsb.toString());
+        //this.channelGridAdapter.getFilter().filter(chsb.toString());
         this.channelGridAdapter.getFilter().filter(chs.toString());
 
     }
@@ -193,41 +196,58 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-
-        String genreIDx = "all";
+        Genre genreItem = new Genre();
+        genreItem.InitGenres();
 
         try {
 
             super.onActivityResult(requestCode, resultCode, data);
 
-            genreIDx = data.getStringExtra("genre_id");
+            genreItem.genre_id = data.getStringExtra("genre_id");
+            genreItem.genre_desc = data.getStringExtra("genre_desc");
 
         } catch (NullPointerException e) {
 
-            genreIDx = "all";
+            genreItem.InitGenres();
 
         } finally {
 
-            Log.d("Genre", genreIDx + "  " + resultCode);
+            Log.d("Genre", genreItem.genre_desc + "  " + resultCode);
 
-            this.onGenreResult(genreIDx);
+            this.onGenreResult(genreItem);
 
         }
 
 
     }
 
-    private void onGenreResult(String genreIDs) {
+    private void showGenresInfo(Genre genreItem, int channels_count) {
 
-        if (genreIDs.equals("all")) {
+        String postMsg = (genreItem.genre_id.equals("all")) ? "!" : " жанра " + genreItem.genre_desc;
+
+        String firstMesg = (channels_count > 0) ? "Надено " + channels_count +
+                " канал(ов)(а)" + postMsg : "Каналы" + postMsg +
+                " не найдены!";
+
+        Toast.makeText(getActivity().getApplicationContext(), firstMesg, Toast.LENGTH_LONG).show();
+
+    }
+
+    private void onGenreResult(Genre genreItem) {
+
+        genreFlag.InitGenres(genreItem);
+
+        if (genreItem.genre_id.equals("all")) {
 
             this.getChannels(true);
 
         } else {
 
-            this.getChannels(genreIDs);
+            this.getChannels(genreItem.genre_id);
 
         }
+
+
     }
 
     private void requestChannels(String url, boolean reFresh) {

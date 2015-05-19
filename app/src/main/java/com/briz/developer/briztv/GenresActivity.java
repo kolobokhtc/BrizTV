@@ -1,8 +1,6 @@
 package com.briz.developer.briztv;
 
 import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +23,11 @@ public class GenresActivity extends ActionBarActivity implements AdapterView.OnI
     private static final String TAG = GenresActivity.class.getSimpleName();
 
     ListView lwGenres;
-    View mView;
     ArrayList<Genre> genres;
     StalkerLoader APILoader;
     StalkerClient sc;
     Integer user_id;
-    String genreID;
+    Genre genreSEL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,26 +48,27 @@ public class GenresActivity extends ActionBarActivity implements AdapterView.OnI
 
     }
 
+    private Genre getInitGenresObject() {
 
+        Genre gnr = new Genre();
+        gnr.InitGenres();
+
+        return gnr;
+
+    }
 
 
     private void showGenres() {
 
         lwGenres = (ListView) findViewById(R.id.lwGenresList);
 
-        ArrayList<Genre> gnrs = new ArrayList<>();
-
-        Genre gnr = new Genre();
-        gnr.genre_id = "all";
-        gnr.genre_desc = "все жанры";
-
-        gnrs.clear();
-        gnrs.add(gnr);
-
-        gnrs.addAll(genres);
+        ArrayList<Genre> tempGenres = new ArrayList<>();
+        tempGenres.clear();
+        tempGenres.add(this.getInitGenresObject());
+        tempGenres.addAll(genres);
 
         genres.clear();
-        genres.addAll(gnrs);
+        genres.addAll(tempGenres);
 
         lwGenres.setAdapter(new GenresListAdapter(this, genres));
 
@@ -169,16 +167,20 @@ public class GenresActivity extends ActionBarActivity implements AdapterView.OnI
 
 
 
-    private void returnActivityResult(String genre_id) {
+    private void returnActivityResult(Genre genre) {
 
-        genreID = genre_id;
+        genreSEL = genre;
+        this.prepareDataIntent(genre);
+        finish();
+
+    }
+
+    private void prepareDataIntent(Genre genre) {
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("genre_id", genreID);
+        returnIntent.putExtra("genre_id", genre.genre_id);
+        returnIntent.putExtra("genre_desc", genre.genre_desc);
         setResult(RESULT_OK, returnIntent);
-
-
-        finish();
 
     }
 
@@ -191,25 +193,22 @@ public class GenresActivity extends ActionBarActivity implements AdapterView.OnI
         final Genre genre;
         genre = genres.get(position);
 
-        this.returnActivityResult(genre.genre_id);
+        this.returnActivityResult(genre);
 
     }
 
     @Override
     protected void onDestroy() {
 
-        if (genreID == null) {
+        if (genreSEL == null) {
 
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("genre_id", "all");
-            setResult(RESULT_OK, returnIntent);
+            genreSEL = this.getInitGenresObject();
+            prepareDataIntent(genreSEL);
 
         }
 
         super.onDestroy();
 
-
-
-        Log.d(TAG, "Item genre: " + genreID);
+        Log.d(TAG, "Item genre: " + genreSEL.genre_desc);
     }
 }

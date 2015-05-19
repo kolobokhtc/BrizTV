@@ -73,8 +73,15 @@ public class LoginActivity extends Activity{
 
     private void setupPreferences() {
 
-        etUsername = sp.getString("user_login", "test_acc");
+        etUsername = sp.getString("user_login", "user_login");
         etPassword= sp.getString("user_pwd", "guest");
+
+        if (etUsername.equals("user_login")) {
+
+            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+            startActivity(prefIntent);
+        }
+
 
 
     }
