@@ -160,6 +160,13 @@ public class LoginActivity extends Activity{
 
     }
 
+    private void showSettingMenu() {
+
+        Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+        startActivity(prefIntent);
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -175,9 +182,8 @@ public class LoginActivity extends Activity{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
-            startActivity(prefIntent);
 
+            this.showSettingMenu();
             return true;
         }
 

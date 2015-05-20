@@ -15,6 +15,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 //import android.preference.RingtonePreference;
 //import android.text.TextUtils;
 
@@ -66,10 +67,11 @@ public class BrizTVSettingsActivity extends PreferenceActivity {
         // use the older PreferenceActivity APIs.
 
         // Add 'general' preferences.
-        PreferenceCategory fakeHeader = new PreferenceCategory(this);
+        //PreferenceCategory fakeHeader = new PreferenceCategory(this);
         //fakeHeader.setTitle(R.string.pref_header_general);
-        //getPreferenceScreen().addPreference(fakeHeader);
+
         addPreferencesFromResource(R.xml.pref_general);
+        //getPreferenceScreen().addPreference(fakeHeader);
 
         // Add 'notifications' preferences, and a corresponding header.
         //fakeHeader = new PreferenceCategory(this);

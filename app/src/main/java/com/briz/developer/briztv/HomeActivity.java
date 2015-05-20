@@ -3,8 +3,6 @@ package com.briz.developer.briztv;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v4.widget.DrawerLayout;
@@ -21,7 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class HomeActivity extends ActionBarActivity implements
+                NavigationDrawerFragment.NavigationDrawerCallbacks, SearchView.OnQueryTextListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -91,6 +90,11 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
             case 3:
                 mTitle = getString(R.string.title_section3);
                 break;
+
+            case 4:
+                mTitle = getString(R.string.action_settings);
+                showSettings();
+                break;
         }
     }
 
@@ -113,7 +117,10 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
             allChannelsFragment.setAPILoader(APILoader);
             allChannelsFragment.getChannels();
 
+            Log.d(TAG, "Hash code allChannel " + allChannelsFragment.hashCode());
+
         }
+
 
 
     }
@@ -140,26 +147,32 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
             MenuItem searchItem = menu.findItem(R.id.action_search);
             searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    allChannelsFragment.ApplyFilter(s.toString());
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-
-                    allChannelsFragment.ApplyFilter(s.toString());
-                    return true;
-                }
-            });
-
-
+            searchView.setOnQueryTextListener(this);
 
             return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+
+        allChannelsFragment.ApplyFilter(s.toString());
+        Log.d(TAG, "Search String is " + s.toString() + " " + allChannelsFragment.hashCode());
+        return true;
+
+    }
+
+    private void showSettings() {
+
+        Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+        startActivity(prefIntent);
+
     }
 
     @Override
@@ -171,8 +184,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
-            startActivity(prefIntent);
+
+            this.showSettings();
 
             return true;
         }
@@ -239,4 +252,9 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
         allChannelsFragment.setAPILoader(APILoader);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (searchView != null) searchView.setOnQueryTextListener(this);
+    }
 }

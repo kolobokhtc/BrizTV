@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import android.widget.AdapterView;
 
-import android.widget.Filter;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -37,7 +36,7 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     private static final String TAG = AllChannelsFragment.class.getSimpleName();
 
 
-    static ArrayList<Channel> channels = new ArrayList<Channel>();
+    static ArrayList<Channel> channels = new ArrayList<>();
     static ArrayList<String> resultRow;
     final AllChannelsFragment that = this;
 
@@ -70,12 +69,15 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
         ImageLoader.getInstance().init(config);
 
         genreFlag = new Genre();
-        genreFlag.InitGenres();
+        genreFlag.InitGenres(); // Инициализирум структуру жанров значением "все жанры"
 
     }
 
 
-
+    /**
+     * Метод установки загрузчика Stalker
+     * @param loader - загрузчик Stalker
+     */
     public void setAPILoader(StalkerLoader loader){
         APILoader = loader;
     }
@@ -94,40 +96,29 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     }
 
 
-    public Filter.FilterListener onFilterCompleted() {
-
-        return new Filter.FilterListener() {
-
-            @Override
-            public void onFilterComplete(int count) {
-
-                initChannelsUI();
-
-
-                Log.d(TAG, "ADAPTER: " + that.channelGridAdapter.getChannelList().toString() + " Count: " + count);
-
-            }
-        };
-
-    }
-
+    /**
+     * Метод инициализации GUI сетки каналов
+     */
     private void initChannelsUI() {
 
-        this.gv = (GridView) mView.findViewById(R.id.gv_channels_grid);
-        this.gv.refreshDrawableState();
+        if (this.gv == null) { this.gv = (GridView) mView.findViewById(R.id.gv_channels_grid); }
+        //this.gv.refreshDrawableState();
         this.gv.setAdapter(channelGridAdapter);
-        this.gv.refreshDrawableState();
+        //this.gv.refreshDrawableState();
 
     }
 
 
-
-
+    /**
+     * Метод показа сетки каналов
+     */
     public void showChannels(){
 
         Log.d(TAG, "CHANNELS ON CREATE VIEW COUNT: " + channels.size());
 
         channelGridAdapter = (!hasChannels()) ? new ChannelGridAdapter(getActivity(), channels) : channelGridAdapter;
+        //channelGridAdapter = new ChannelGridAdapter(getActivity(), channels);
+        this.channelGridAdapter.setRefreshOrigin(true);
         Log.d(TAG, "INIT ADAPTER: " + channels.size());
         Log.d(TAG, "SET ADAPTER: " + channels.size());
 
@@ -147,21 +138,31 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
-
+    /**
+     * Метод вызова фильтрации содержимого сетки каналов по названию канала
+     * @param chs - часть фильтра названия
+     */
     public void ApplyFilter(CharSequence chs) {
 
-        CharSequence chsb = "";
+        //CharSequence chsb = "";
         //this.channelGridAdapter.getFilter().filter(chsb.toString());
         this.channelGridAdapter.getFilter().filter(chs.toString());
 
     }
 
+    /**
+     * Метод получения списка всех каналов без обновления
+     */
     public void getChannels(){
 
         this.getChannels(false);
 
     }
 
+    /**
+     * Метод получения списка всех каналов
+     * @param reFresh - обновлять или нет список каналов
+     */
     public void getChannels(boolean reFresh){
 
         setupStalkerClient();
@@ -172,6 +173,10 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+    /**
+     * Метод получения списка каналов по определенному жанру
+     * @param genre_id - идентификатор жанра видео
+     */
     public void getChannels(String genre_id) {
 
         this.setupStalkerClient();
@@ -182,6 +187,9 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+    /**
+     * Метод вызова активности выбора жанра видео
+     */
     public void startChooseGenres() {
 
         Intent genresIntent = new Intent(getActivity().getBaseContext(), GenresActivity.class);
@@ -192,7 +200,12 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
     }
 
 
-
+    /**
+     * Обработчик возврата результата от дочерней активности
+     * @param requestCode - код запроса
+     * @param resultCode - код возврата
+     * @param data - данные из намерений
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -221,18 +234,27 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+    /**
+     * Метод вывода оповещения о выбранном жанре
+     * @param genreItem - выбранный объект жанра
+     * @param channels_count - количество найденных каналов
+     */
     private void showGenresInfo(Genre genreItem, int channels_count) {
 
-        String postMsg = (genreItem.genre_id.equals("all")) ? "!" : " жанра " + genreItem.genre_desc;
+        String postMsg = (genreItem.genre_id.equals("all")) ? "!" : " " + getString(R.string.genre)  + " " + genreItem.genre_desc;
 
-        String firstMesg = (channels_count > 0) ? "Надено " + channels_count +
-                " канал(ов)(а)" + postMsg : "Каналы" + postMsg +
-                " не найдены!";
+        String firstMesg = (channels_count > 0) ? getString(R.string.genre_found) + " " + channels_count +
+                " " + getString(R.string.genre_channelses) + postMsg : getString(R.string.genre_channels) + postMsg +
+                " " + getString(R.string.genre_not_found);
 
         Toast.makeText(getActivity().getApplicationContext(), firstMesg, Toast.LENGTH_LONG).show();
 
     }
 
+    /**
+     * Метод-роутер вызова нужного метода получения списка каналов
+     * @param genreItem - - выбранный объект жанра
+     */
     private void onGenreResult(Genre genreItem) {
 
         genreFlag.InitGenres(genreItem);
@@ -250,11 +272,16 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+    /**
+     * Метод получения списка каналов из ресурса Stalker RESTfull
+     * @param url - URL русурса Stalker RESTfull API
+     * @param reFresh - обновить значения ?
+     */
     private void requestChannels(String url, boolean reFresh) {
 
         Log.d(TAG, "START CHANNELS REQUEST");
 
-        if (hasChannels() && !reFresh) return;
+       if (hasChannels() && !reFresh) return;
 
         getAPILoader().loader(url, new StalkerLoader.OnJSONResponseCallback() {
             @Override
@@ -291,6 +318,11 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+    /**
+     * Метод парсинга списка каналов
+     * @param data - JSON данные от talker RESTfull API
+     * @return - коллекция каналов типа Channel
+     */
     public static ArrayList<Channel> parseChannels(JSONArray data){
 
         ArrayList<Channel> channelsFromAjaxData = new ArrayList<>();

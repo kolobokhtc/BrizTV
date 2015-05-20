@@ -31,6 +31,8 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
     private ArrayList<Channel> channelListOriginal;
     private Context context;
 
+    private boolean refreshOrigin = false;
+
     private ImageLoader imageLoader;
     private DisplayImageOptions imageOptions;
     final ChannelGridAdapter that = this;
@@ -40,7 +42,16 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
 
         this.channelList = channelList;
 
-        this.channelListOriginal  = channelList;
+        if (this.channelListOriginal == null || (this.channelListOriginal != null && this.channelListOriginal.size() == 0) || this.refreshOrigin) {
+
+            this.channelListOriginal  = new ArrayList<>();
+
+            this.channelListOriginal.addAll(channelList);
+
+            Log.d(TAG, "Origin init count:"  + this.channelListOriginal.size());
+
+
+        }
 
         this.context = context;
 
@@ -55,6 +66,12 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
                 .considerExifParams(true)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .displayer(new RoundedBitmapDisplayer(20)).build();
+
+    }
+
+    public void setRefreshOrigin(boolean refreshOrigin) {
+
+        this.refreshOrigin = refreshOrigin;
 
     }
 
@@ -93,6 +110,8 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
 
+            setRefreshOrigin(false);
+
             FilterResults results = new FilterResults();
 
             List<Channel> eChannelList = new ArrayList<>();
@@ -111,6 +130,7 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
 
                 ArrayList <Channel> tchannelList = new ArrayList<>();
                 tchannelList.addAll(getOriginalChannelList());
+                Log.d(TAG, "Original count: " + tchannelList.size());
 
                 for (Channel p : tchannelList) {
                     if (p.name.toUpperCase().contains(constraint.toString().toUpperCase()))
@@ -125,6 +145,8 @@ public class ChannelGridAdapter extends ArrayAdapter<Channel> implements Filtera
             return results;
 
         }
+
+
 
 
         @Override
