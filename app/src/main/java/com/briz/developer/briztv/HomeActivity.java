@@ -3,13 +3,13 @@ package com.briz.developer.briztv;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,13 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class HomeActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class HomeActivity extends ActionBarActivity implements
+                NavigationDrawerFragment.NavigationDrawerCallbacks, SearchView.OnQueryTextListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private CharSequence mTitle;
+
+    SearchView searchView;
 
     //private StalkerClient stalkerClient;
     StalkerLoader APILoader;
@@ -67,10 +70,17 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+
+        if (position != 3 ) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                    .commit();
+        } else {
+
+            showSettings();
+        }
     }
 
     public void onSectionAttached(int number) {
@@ -86,6 +96,11 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
+                break;
+
+            case 4: //TODO Settings as Fragment
+                mTitle = getString(R.string.action_settings);
+                //showChannelFragment();
                 break;
         }
     }
@@ -109,7 +124,10 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
             allChannelsFragment.setAPILoader(APILoader);
             allChannelsFragment.getChannels();
 
+            Log.d(TAG, "Hash code allChannel " + allChannelsFragment.hashCode());
+
         }
+
 
 
     }
@@ -132,9 +150,36 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.home, menu);
             restoreActionBar();
+
+            MenuItem searchItem = menu.findItem(R.id.action_search);
+            searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+            searchView.setOnQueryTextListener(this);
+
             return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+
+        allChannelsFragment.ApplyFilter(s.toString());
+        Log.d(TAG, "Search String is " + s.toString() + " " + allChannelsFragment.hashCode());
+        return true;
+
+    }
+
+    private void showSettings() {
+
+        Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
+        startActivity(prefIntent);
+
     }
 
     @Override
@@ -146,8 +191,8 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
-            startActivity(prefIntent);
+
+            this.showSettings();
 
             return true;
         }
@@ -211,7 +256,12 @@ public class HomeActivity extends ActionBarActivity implements NavigationDrawerF
 
 
 
-        allChannelsFragment.setAPILoader(APILoader);
+        //if (searchView != null) allChannelsFragment.setAPILoader(APILoader);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (searchView != null) searchView.setOnQueryTextListener(this);
+    }
 }

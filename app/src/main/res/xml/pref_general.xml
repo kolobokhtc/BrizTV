@@ -8,21 +8,28 @@
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <EditTextPreference
-        android:key="user_login"
-        android:title="@string/pref_title_display_name"
-        android:defaultValue="@string/pref_default_display_name"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:maxLines="1" />
 
-    <EditTextPreference
-        android:key="user_pwd"
-        android:title="@string/pref_title_display_pwd"
-        android:defaultValue="@string/pref_default_display_pwd"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:maxLines="1" />
+    <PreferenceCategory
+        android:key="auth_settings"
+        android:title = "@string/pref_header_general">
+
+        <EditTextPreference
+            android:key="user_login"
+            android:title="@string/pref_title_display_name"
+            android:defaultValue="@string/pref_default_display_name"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
+            android:key="user_pwd"
+            android:title="@string/pref_title_display_pwd"
+            android:defaultValue="@string/pref_default_display_pwd"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+    </PreferenceCategory>
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->

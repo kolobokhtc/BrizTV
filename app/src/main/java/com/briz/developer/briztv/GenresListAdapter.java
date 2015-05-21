@@ -19,11 +19,11 @@ public class GenresListAdapter extends ArrayAdapter<Genre> implements Filterable
 
     private static final String TAG = ChannelGridAdapter.class.getSimpleName();
 
-    private Filter genreFilter;
-    private ArrayList<Genre> genresList;
-    private ArrayList<Genre> genresListOriginal;
+    //private Filter genreFilter;
+    //private ArrayList<Genre> genresList;
+    //private ArrayList<Genre> genresListOriginal;
 
-    final GenresListAdapter that = this;
+    //final GenresListAdapter that = this;
 
 
 
@@ -32,8 +32,8 @@ public class GenresListAdapter extends ArrayAdapter<Genre> implements Filterable
         super(context, R.layout.genres_list_item, genresList);
 
 
-        this.genresList = genresList;
-        this.genresListOriginal= genresList;
+        //this.genresList = genresList;
+        //this.genresListOriginal= genresList;
 
 
     }
@@ -51,6 +51,7 @@ public class GenresListAdapter extends ArrayAdapter<Genre> implements Filterable
             holder = new ViewHolder();
             holder.genreName = (TextView) view.findViewById(R.id.genreOption);
             view.setTag(holder);
+
         } else {
 
             holder = (ViewHolder) view.getTag();
@@ -59,6 +60,7 @@ public class GenresListAdapter extends ArrayAdapter<Genre> implements Filterable
         Genre genre = getItem(position);
 
         holder.genreName.setText(genre.genre_desc);
+
 
         return view;
     }

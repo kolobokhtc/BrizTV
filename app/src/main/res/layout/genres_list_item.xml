@@ -4,21 +4,18 @@
     android:layout_height="match_parent"
     android:id="@+id/genreItem"
     android:gravity="left"
+    android:padding="10dp"
     android:textAlignment="gravity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Genre"
         android:id="@+id/genreOption"
-        android:enabled="false"
         android:gravity="left"
         android:textAlignment="gravity"
-        android:textSize="32sp"
-        android:clickable="false"
-        android:capitalize="none"
-        android:focusable="false"
         android:focusableInTouchMode="false"
-        android:textColor="@color/background_material_dark"
-        android:padding="9sp" />
+        android:clickable="false"
+        android:focusable="false"
+        android:textSize="24dp"
+        android:textColor="@color/background_material_dark" />
 </LinearLayout>
