@@ -70,9 +70,11 @@ public class GenresActivity extends ActionBarActivity implements AdapterView.OnI
         genres.clear();
         genres.addAll(tempGenres);
 
+        lwGenres.setOnItemClickListener(this);
+
         lwGenres.setAdapter(new GenresListAdapter(this, genres));
 
-        lwGenres.setOnItemClickListener(this);
+
 
 
     }

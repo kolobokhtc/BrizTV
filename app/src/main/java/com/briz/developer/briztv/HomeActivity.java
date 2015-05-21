@@ -70,10 +70,17 @@ public class HomeActivity extends ActionBarActivity implements
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+
+        if (position != 3 ) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                    .commit();
+        } else {
+
+            showSettings();
+        }
     }
 
     public void onSectionAttached(int number) {
@@ -91,9 +98,9 @@ public class HomeActivity extends ActionBarActivity implements
                 mTitle = getString(R.string.title_section3);
                 break;
 
-            case 4:
+            case 4: //TODO Settings as Fragment
                 mTitle = getString(R.string.action_settings);
-                showSettings();
+                //showChannelFragment();
                 break;
         }
     }
@@ -249,7 +256,7 @@ public class HomeActivity extends ActionBarActivity implements
 
 
 
-        allChannelsFragment.setAPILoader(APILoader);
+        //if (searchView != null) allChannelsFragment.setAPILoader(APILoader);
     }
 
     @Override
