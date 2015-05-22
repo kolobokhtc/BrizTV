@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * Класс фрагмента списка каналов (вид сеткой)
  * @version 21.04.2015.
  */
-public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class AllChannelsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private static final String TAG = AllChannelsFragment.class.getSimpleName();
 
@@ -126,6 +126,7 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
         initChannelsUI();
 
         gv.setOnItemClickListener(this);
+        gv.setOnItemLongClickListener(this);
 
         this.showGenresInfo(genreFlag, channels.size());
 
@@ -353,6 +354,12 @@ public class AllChannelsFragment extends Fragment implements AdapterView.OnItemC
 
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+        this.startChooseGenres();
+        return true;
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

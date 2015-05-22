@@ -1,10 +1,12 @@
 package com.briz.developer.briztv;
 
-import android.app.Activity;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +24,7 @@ import org.json.JSONObject;
 
 
 
-public class LoginActivity extends Activity{
+public class LoginActivity extends ActionBarActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -51,6 +53,7 @@ public class LoginActivity extends Activity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 
 
 
@@ -122,6 +125,7 @@ public class LoginActivity extends Activity{
                     if (success){
 
                         stalkerClient = APILoader.getStalkerClient();
+                        tvErrorMessage.setText("");
 
                         Log.d(TAG, "CLIENT ID: " + stalkerClient.getUserId());
 
@@ -155,7 +159,7 @@ public class LoginActivity extends Activity{
 
         } else {
 
-            Toast.makeText(getApplicationContext(), "Пожалуйста введите корретный логин и пароль", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.enter_correct_login), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -167,27 +171,39 @@ public class LoginActivity extends Activity{
 
     }
 
+    private void restoreActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setLogo(R.mipmap.ic_launcher);
+        actionBar.setTitle(getString(R.string.activity_title));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.global, menu);
+        restoreActionBar();
 
         return super.onCreateOptionsMenu(menu);
     }
 
+
+
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings || id == R.id.actions_settings) {
 
             this.showSettingMenu();
             return true;
         }
 
-        return super.onMenuItemSelected(featureId, item);
+        return super.onOptionsItemSelected(item);
     }
 
     private void startHomeActivity() {
