@@ -1,7 +1,6 @@
 package com.briz.developer.briztv;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -36,7 +35,7 @@ public class HomeActivity extends ActionBarActivity implements
     private AllChannelsFragment allChannelsFragment;
 
     TextView tvSectionContent;
-    ProgressDialog progressDialog;
+    //ProgressDialog progressDialog;
 
 
 
@@ -62,25 +61,21 @@ public class HomeActivity extends ActionBarActivity implements
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        progressDialog = new ProgressDialog(this);
+        /*progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.progress_wait));
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(false);*/
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
 
-        if (position != 3 ) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                     .commit();
-        } else {
 
-            showSettings();
-        }
     }
 
     public void onSectionAttached(int number) {
@@ -96,11 +91,6 @@ public class HomeActivity extends ActionBarActivity implements
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
-                break;
-
-            case 4: //TODO Settings as Fragment
-                mTitle = getString(R.string.action_settings);
-                //showChannelFragment();
                 break;
         }
     }
@@ -190,7 +180,7 @@ public class HomeActivity extends ActionBarActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings || id == R.id.actions_settings) {
 
             this.showSettings();
 

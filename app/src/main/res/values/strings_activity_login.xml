@@ -3,6 +3,7 @@
     <!-- Strings related to login -->
     <string name="login_title">Вход</string>
     <string name="register_title">Регистрация</string>
+    <string name="activity_title">Бриз IPTV</string>
 
     <string name="form_name_text">Имя</string>
     <string name="form_name_hint">Введите имя</string>
@@ -13,6 +14,8 @@
 
     <string name="button_form_login">Список каналов</string>
     <string name="button_form_register">Зарегистрироваться</string>
+
+    <string name="enter_correct_login">Пожалуйста введите корретный логин и пароль</string>
 
     <string name="progress_wait">Загрузка...</string>
 </resources>
