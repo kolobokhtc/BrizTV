@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
@@ -23,29 +26,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-
-public class LoginActivity extends ActionBarActivity {
+/**
+ * Класс активности авторизации приложения
+ *
+ */
+public class LoginActivity extends ActionBarActivity{
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private StalkerClient stalkerClient;
     private StalkerLoader APILoader;
 
-    TextView tvErrorMessage;
+    //TextView tvErrorMessage;
     String etUsername;
     String etPassword;
+
+    FragmentManager fragmentManager;
+
+    EditText inUsername;
+    EditText inPassword;
     ProgressBar eLoginPb;
     Button eLoginBtn;
+
     SharedPreferences sp;
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.loginPbViewLogic(false);
-
+        //this.loginPbViewLogic(false);
         sp = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
         setupPreferences();
+        this.loginUser(false);
+
     }
 
     @Override
@@ -54,50 +67,80 @@ public class LoginActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
-
+        fragmentManager = getSupportFragmentManager();
 
         APILoader = new StalkerLoader(getApplicationContext(), new StalkerClient());
 
-        tvErrorMessage = (TextView) findViewById(R.id.login_error);
+        //tvErrorMessage = (TextView) findViewById(R.id.login_error);
 
-        eLoginPb = (ProgressBar) findViewById(R.id.loginProgress);
-        eLoginBtn = (Button) findViewById(R.id.btnLogin);
+        //eLoginPb = (ProgressBar) findViewById(R.id.loginProgress);
+        //eLoginBtn = (Button) findViewById(R.id.btnLogin);
+        //inUsername = (EditText) findViewById(R.id.fldLogin);
+        //inPassword = (EditText) findViewById(R.id.fldPwd);
+        //eLoginBtn.setOnClickListener(this);
 
 
 
-        this.loginPbViewLogic(false);
+        //this.loginPbViewLogic(false);
 
+
+    }
+
+    private void showFragmentByInstance(Fragment fragment, String tag) {
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.loginContainer, fragment, tag)
+                .commit();
 
     }
 
 
 
+    /**
+     * Метод получения настроек приложения
+     */
     private void setupPreferences() {
 
-        etUsername = sp.getString("user_login", "user_login");
-        etPassword= sp.getString("user_pwd", "guest");
-
-        if (etUsername.equals("user_login")) {
-
-            Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
-            startActivity(prefIntent);
-        }
-
+        etUsername = sp.getString(getString(R.string.user_login_pref_key), getString(R.string.user_login_pref_key));
+        etPassword = sp.getString(getString(R.string.user_pwd_pref_key), "guest");
 
 
     }
 
+    public void savePreferenses(String login, String passwd) {
 
+        sp.edit().putString(getString(R.string.user_login_pref_key), login).putString(getString(R.string.user_pwd_pref_key), passwd).apply();
+
+    }
+
+    /**
+     * Метод управления отображением фрагмента прогрессбара/логина
+     * @param shPb - показывать прогрессбар или нет
+     */
     protected void loginPbViewLogic(boolean shPb) {
 
-        eLoginPb.setVisibility((shPb) ? View.VISIBLE : View.INVISIBLE);
-        eLoginBtn.setVisibility((shPb) ? View.INVISIBLE : View.VISIBLE);
+       // eLoginPb.setVisibility((shPb) ? View.VISIBLE : View.INVISIBLE);
+        //eLoginBtn.setVisibility((shPb) ? View.INVISIBLE : View.VISIBLE);
+
+        if (shPb) {
+
+            this.showFragmentByInstance(new LoginBusyFragment(), "loginbusy");
+
+        } else {
+
+            this.showFragmentByInstance(loginFormFragment.newInstance(etUsername, etPassword), "loginform");
+
+        }
 
     }
 
-    public void loginUser(View view){
+    /**
+     * Метод авторизации пользователя на Stalker
+     *
+     */
+    public void loginUser(boolean getPref){
+
+        if (getPref) this.setupPreferences();
 
 
         final LoginActivity that = this;
@@ -125,7 +168,7 @@ public class LoginActivity extends ActionBarActivity {
                     if (success){
 
                         stalkerClient = APILoader.getStalkerClient();
-                        tvErrorMessage.setText("");
+                        //tvErrorMessage.setText("");
 
                         Log.d(TAG, "CLIENT ID: " + stalkerClient.getUserId());
 
@@ -136,7 +179,7 @@ public class LoginActivity extends ActionBarActivity {
 
                         try{
 
-                            tvErrorMessage.setText(response.getString("error_description"));
+                            //tvErrorMessage.setText(response.getString("error_description"));
                             Toast.makeText(getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
 
                         } catch (JSONException e){
@@ -164,6 +207,9 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Метод вывода активности настроек приложения
+     */
     private void showSettingMenu() {
 
         Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);
@@ -171,6 +217,9 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Метод восстановления экшн-бара
+     */
     private void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -206,12 +255,16 @@ public class LoginActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Метод запуска активности-контейнера фрагментов
+     */
     private void startHomeActivity() {
 
         Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
         homeIntent.putExtra(StalkerClient.class.getCanonicalName(), stalkerClient);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(homeIntent);
+        finish();
 
     }
 

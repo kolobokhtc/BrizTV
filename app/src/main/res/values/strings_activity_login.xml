@@ -5,10 +5,10 @@
     <string name="register_title">Регистрация</string>
     <string name="activity_title">Бриз IPTV</string>
 
-    <string name="form_name_text">Имя</string>
-    <string name="form_name_hint">Введите имя</string>
-    <string name="form_login_text">OTT IPTV ООО ТРК Бриз</string>
-    <string name="form_login_hint">Введите Email</string>
+    <string name="form_login_text">Логин</string>
+    <string name="form_login_hint">Введите логин</string>
+    <string name="label_player_text">IPTV плеер ООО ТРК Бриз</string>
+    <string name="form_email_hint">Введите Email</string>
     <string name="form_password_text">Пароль</string>
     <string name="form_password_hint">Введите пароль</string>
 
@@ -18,4 +18,8 @@
     <string name="enter_correct_login">Пожалуйста введите корретный логин и пароль</string>
 
     <string name="progress_wait">Загрузка...</string>
+    <string name="user_login_pref_key">user_login</string>
+    <string name="user_pwd_pref_key">user_pwd</string>
+    <string name="cab_user_login_pref_key">cab_user_login</string>
+    <string name="cab_user_pwd_pref_key">cab_user_pwd</string>
 </resources>

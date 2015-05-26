@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical|center_horizontal"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/form_login_text"
+        android:id="@+id/tvUsername"
+        android:layout_gravity="left"
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fieldUsername"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:textIsSelectable="false"
+        android:inputType="text"
+        android:enabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:editable="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="@string/form_login_hint" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/form_password_text"
+        android:id="@+id/tvPassword"
+        android:textSize="20dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fieldPassword"
+        android:layout_marginBottom="5dp"
+        android:textIsSelectable="false"
+        android:inputType="textPassword"
+        android:editable="true"
+        android:enabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="@string/form_password_hint" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="36dp"
+        android:text="@string/button_form_login"
+        android:id="@+id/btnOpenPlayList"
+        android:background="@color/blue"
+        android:textColor="#ffffffff"
+        android:clickable="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+</LinearLayout>
