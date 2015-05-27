@@ -1,6 +1,6 @@
 package com.briz.developer.briztv;
 
-
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,15 +13,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ProgressBar;
-
 import com.loopj.android.http.RequestParams;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,24 +30,19 @@ public class LoginActivity extends ActionBarActivity{
     private StalkerClient stalkerClient;
     private StalkerLoader APILoader;
 
-    //TextView tvErrorMessage;
     String etUsername;
     String etPassword;
 
-    FragmentManager fragmentManager;
 
-    EditText inUsername;
-    EditText inPassword;
-    ProgressBar eLoginPb;
-    Button eLoginBtn;
+    FragmentManager fragmentManager;
 
     SharedPreferences sp;
 
-
     @Override
     protected void onResume() {
+
         super.onResume();
-        //this.loginPbViewLogic(false);
+
         sp = PreferenceManager.getDefaultSharedPreferences(this.getBaseContext());
         setupPreferences();
         this.loginUser(false);
@@ -70,19 +58,6 @@ public class LoginActivity extends ActionBarActivity{
         fragmentManager = getSupportFragmentManager();
 
         APILoader = new StalkerLoader(getApplicationContext(), new StalkerClient());
-
-        //tvErrorMessage = (TextView) findViewById(R.id.login_error);
-
-        //eLoginPb = (ProgressBar) findViewById(R.id.loginProgress);
-        //eLoginBtn = (Button) findViewById(R.id.btnLogin);
-        //inUsername = (EditText) findViewById(R.id.fldLogin);
-        //inPassword = (EditText) findViewById(R.id.fldPwd);
-        //eLoginBtn.setOnClickListener(this);
-
-
-
-        //this.loginPbViewLogic(false);
-
 
     }
 
@@ -119,9 +94,6 @@ public class LoginActivity extends ActionBarActivity{
      */
     protected void loginPbViewLogic(boolean shPb) {
 
-       // eLoginPb.setVisibility((shPb) ? View.VISIBLE : View.INVISIBLE);
-        //eLoginBtn.setVisibility((shPb) ? View.INVISIBLE : View.VISIBLE);
-
         if (shPb) {
 
             this.showFragmentByInstance(new LoginBusyFragment(), "loginbusy");
@@ -133,6 +105,7 @@ public class LoginActivity extends ActionBarActivity{
         }
 
     }
+
 
     /**
      * Метод авторизации пользователя на Stalker
@@ -163,15 +136,10 @@ public class LoginActivity extends ActionBarActivity{
 
                     Log.d(TAG, "LOGIN RESULT: " + success + " | RESPONSE: " + response.toString());
 
-
-
                     if (success){
 
                         stalkerClient = APILoader.getStalkerClient();
-                        //tvErrorMessage.setText("");
-
                         Log.d(TAG, "CLIENT ID: " + stalkerClient.getUserId());
-
                         startHomeActivity();
 
                     } else {
@@ -179,8 +147,8 @@ public class LoginActivity extends ActionBarActivity{
 
                         try{
 
-                            //tvErrorMessage.setText(response.getString("error_description"));
-                            Toast.makeText(getApplicationContext(), response.getString("error"), Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), response.getString("error_description"), Toast.LENGTH_LONG).show();
+                            ErrorsToast.showToast(getApplicationContext(), that, response.getString("error_description"));
 
                         } catch (JSONException e){
 
@@ -222,7 +190,6 @@ public class LoginActivity extends ActionBarActivity{
      */
     private void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setLogo(R.mipmap.ic_launcher);
@@ -245,7 +212,6 @@ public class LoginActivity extends ActionBarActivity{
 
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings || id == R.id.actions_settings) {
 
             this.showSettingMenu();

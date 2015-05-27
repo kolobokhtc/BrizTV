@@ -90,8 +90,6 @@ public class loginFormFragment extends Fragment implements View.OnClickListener{
 
             rootActivity.savePreferenses(inUsername.getText().toString(), inPassword.getText().toString());
 
-        //}
-
     }
 
 

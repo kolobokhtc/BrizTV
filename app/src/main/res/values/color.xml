@@ -3,5 +3,7 @@
 <resources>
 
     <item name="blue" type="color">#ff33b5e5</item>
+    <item name="darkRed" type="color">#ff9b250a</item>
+    <item name="absWhite" type="color">#ffffffff</item>
 
 </resources>
