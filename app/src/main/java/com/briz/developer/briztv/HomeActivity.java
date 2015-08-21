@@ -18,6 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+
+/**
+ * Класс активности-контейнера фрагментов приложения
+ */
 public class HomeActivity extends ActionBarActivity implements
                 NavigationDrawerFragment.NavigationDrawerCallbacks, SearchView.OnQueryTextListener {
 
@@ -95,6 +99,9 @@ public class HomeActivity extends ActionBarActivity implements
         }
     }
 
+    /**
+     * Метод вывода фрагмента показа каналов ТВ
+     */
     public void showChannelFragment(){
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -123,7 +130,9 @@ public class HomeActivity extends ActionBarActivity implements
     }
 
 
-
+    /**
+     * Метод восстановления экшн-бара
+     */
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -165,6 +174,9 @@ public class HomeActivity extends ActionBarActivity implements
 
     }
 
+    /**
+     * Метод показа активности настроек приложения
+     */
     private void showSettings() {
 
         Intent prefIntent = new Intent(getApplicationContext(), BrizTVSettingsActivity.class);

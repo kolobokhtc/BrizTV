@@ -4,7 +4,8 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">Настройки авторизации</string>
+    <string name="pref_header_general">Настройки авторизации IPTV</string>
+    <string name="pref_header_stat">Настройки авторизации кабинета</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
@@ -13,8 +14,10 @@
 
     <string name="pref_title_display_name">Логин</string>
     <string name="pref_default_display_name">test</string>
+    <string name="pref_default_display_name_cab">guest</string>
     <string name="pref_title_display_pwd">Пароль</string>
     <string name="pref_default_display_pwd">1111</string>
+    <string name="pref_default_display_pwd_cab">guest</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">

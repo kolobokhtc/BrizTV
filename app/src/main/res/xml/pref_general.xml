@@ -14,7 +14,7 @@
         android:title = "@string/pref_header_general">
 
         <EditTextPreference
-            android:key="user_login"
+            android:key="@string/user_login_pref_key"
             android:title="@string/pref_title_display_name"
             android:defaultValue="@string/pref_default_display_name"
             android:selectAllOnFocus="true"
@@ -22,9 +22,30 @@
             android:maxLines="1" />
 
         <EditTextPreference
-            android:key="user_pwd"
+            android:key="@string/user_pwd_pref_key"
             android:title="@string/pref_title_display_pwd"
             android:defaultValue="@string/pref_default_display_pwd"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="cab_settings"
+        android:title = "@string/pref_header_stat">
+
+        <EditTextPreference
+            android:key="@string/cab_user_login_pref_key"
+            android:title="@string/pref_title_display_name"
+            android:defaultValue="@string/pref_default_display_name_cab"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
+            android:key="@string/cab_user_pwd_pref_key"
+            android:title="@string/pref_title_display_pwd"
+            android:defaultValue="@string/pref_default_display_pwd_cab"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:maxLines="1" />

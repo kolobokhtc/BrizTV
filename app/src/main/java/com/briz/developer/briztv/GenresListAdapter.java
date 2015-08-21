@@ -1,7 +1,6 @@
 package com.briz.developer.briztv;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by user on 15.05.15.
+ * Класс-адаптер для списка жанров видео
+ * @author Vladislav Deltsov
+ * @version 25/05/2015
  */
 public class GenresListAdapter extends ArrayAdapter<Genre> implements Filterable {
 
